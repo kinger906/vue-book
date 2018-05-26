@@ -2,7 +2,8 @@
     <div>
       <MHeader>列表页</MHeader>
       <div class="content">
-        <ul>
+        <Loading v-if="loading"></Loading>
+        <ul v-else>
           <router-link v-for="book in books" tag="li" :to="{ name:'detail',params:{ bid: book.bookId}}">
             <img :src="book.bookCover" alt="">
             <div>
@@ -18,15 +19,18 @@
 
 <script>
   import MHeader from '@/base/MHeader';
+  import Loading from '@/base/Loading';
   import { getBooks,removeBook } from '@/api/index';
 export default {
   data(){
     return {
-      books:[]
+      books:[],
+      loading: true
     }
   },
   components:{
-    MHeader
+    MHeader,
+    Loading
   },
   created(){
     this.getBook();
@@ -35,6 +39,7 @@ export default {
     async getBook(){
       let { data: bookList } = await getBooks();
       this.books = bookList;
+      this.loading = false;
     },
     async remove(id){
       await removeBook(id);

@@ -28,3 +28,8 @@ export let updateBook = (id,data) =>{
 export let addBook = (data) =>{
   return axios.post('/book',data);
 }
+
+//首页：slider和hot合并请求，优化首页loading效果
+export let getAll = ()=>{
+  return axios.all([getSliders(),getHotBooks()]);
+}

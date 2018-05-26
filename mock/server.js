@@ -34,13 +34,14 @@ http.createServer((req,res)=>{
   if(pathname === '/hot'){
     read(function (books) {
       let hot = books.reverse().slice(0,6);
-      return res.end(JSON.stringify(hot));
+      setTimeout(() => {
+        res.end(JSON.stringify(hot));
+      }, 500);
     })
     return;
   }
   if(pathname === '/book'){
     let id = parseInt(query.id);
-    console.log(req.method)
     switch (req.method){
       case 'GET':
         if(id){ //获取一本书
@@ -53,7 +54,9 @@ http.createServer((req,res)=>{
         else{ //获取所有图书
           read(function (books) {
             res.setHeader('Content-Type','application/json;charset=utf8');
-            return res.end(JSON.stringify(books.reverse()));
+            setTimeout(() => {
+              res.end(JSON.stringify(books.reverse()));
+            }, 500);
           })
         }
         break;
