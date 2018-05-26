@@ -24,3 +24,7 @@ export let getOneBook = (id) =>{
 export let updateBook = (id,data) =>{
   return axios.put(`/book?id=${id}`,data);
 }
+
+export let addBook = (data) =>{
+  return axios.post('/book',data);
+}

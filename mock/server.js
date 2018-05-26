@@ -66,20 +66,39 @@ http.createServer((req,res)=>{
         })
         break;
       case 'PUT':
-        let str = '';
-        req.on('data',chunk=>{
+        if(id){
+          let str = '';
+          req.on('data',chunk=>{
+            str += chunk;
+          })
+          req.on('end',()=>{
+            let book = JSON.parse(str);
+            read(function (books) {
+              books = books.map(item => {
+                if(item.bookId == id){
+                  return book;
+                }
+                return item;
+              })
+              write(books,()=>{
+                res.end(JSON.stringify(book));
+              })
+            })
+          })
+        }
+        break;
+      case 'POST':
+        let str  =  '';
+        req.on('data',chunk =>{
           str += chunk;
         })
-        req.on('end',()=>{
-          let book = JSON.parse(str);
-          read(function (books) {
-            books = books.map(item => {
-              if(item.bookId == id){
-                return book;
-              }
-              return item;
-            })
-            write(books,()=>{
+        req.on('end',() =>{
+          let book  = JSON.parse(str);
+          read(function(books){
+            let bookId  = books.length>0?books[books.length-1].bookId+1:1;
+            book.bookId  = bookId;
+            books.push(book);
+            write(books,() =>{
               res.end(JSON.stringify(book));
             })
           })
