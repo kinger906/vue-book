@@ -16,3 +16,11 @@ export let getBooks = ()=>{
 export let removeBook = (id) =>{
   return axios.delete(`/book?id=${id}`);
 }
+
+export let getOneBook = (id) =>{
+  return axios.get(`/book?id=${id}`);
+}
+
+export let updateBook = (id,data) =>{
+  return axios.put(`/book?id=${id}`,data);
+}

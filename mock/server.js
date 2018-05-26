@@ -43,14 +43,15 @@ http.createServer((req,res)=>{
     console.log(req.method)
     switch (req.method){
       case 'GET':
-        if(id){
-
-          console.log(2)
+        if(id){ //获取一本书
+          read(function(books){
+            let book = books.find((item)=>item.bookId === id);
+            if(!book) book = {};
+            return res.end(JSON.stringify(book));
+          })
         }
         else{ //获取所有图书
-          console.log(1)
           read(function (books) {
-            console.log(books);
             res.setHeader('Content-Type','application/json;charset=utf8');
             return res.end(JSON.stringify(books.reverse()));
           })
@@ -61,6 +62,26 @@ http.createServer((req,res)=>{
           books = books.filter(book=>book.bookId!=id);
           write(books,function () {
             res.end(JSON.stringify({}));
+          })
+        })
+        break;
+      case 'PUT':
+        let str = '';
+        req.on('data',chunk=>{
+          str += chunk;
+        })
+        req.on('end',()=>{
+          let book = JSON.parse(str);
+          read(function (books) {
+            books = books.map(item => {
+              if(item.bookId == id){
+                return book;
+              }
+              return item;
+            })
+            write(books,()=>{
+              res.end(JSON.stringify(book));
+            })
           })
         })
         break;
