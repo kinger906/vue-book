@@ -38,6 +38,42 @@ export default {
   created(){
     this.getBook();
   },
+  mounted(){    //操作dom在挂载完毕的周期函数里加
+    let scroll = this.$refs.scroll;
+    let top = scroll.offsetTop;
+    let start = 0;
+    let distance = 0;
+    let startHander = (e)=>{
+      start = e.touches[0].pageY;
+      scroll.addEventListener('touchmove',moveHander,false);
+    }
+    let moveHander = (e)=>{
+        let end = e.touches[0].pageY;
+        distance = end - start;
+        if(distance>50){
+          distance = 50;
+        }
+        scroll.style.top = distance + top + 'px';
+        scroll.addEventListener('touchend',endHander,false);
+    }
+    let endHander = ()=>{
+        scroll.removeEventListener('touchmove',moveHander);
+        scroll.removeEventListener('touchend',endHander);
+        this.refreshTimer = setInterval(()=>{
+          if(distance == 0){
+            clearInterval(this.refreshTimer);
+            this.books = [];
+            this.offset = 0;
+            this.getBook();
+          }
+          else{
+            distance-=1;
+            scroll.style.top = distance + top + 'px';
+          }
+        },1)
+    }
+    scroll.addEventListener('touchstart',startHander,false)
+  },
   methods:{
     async getBook(){
       let { data: bookObj } = await getPageBook(this.offset);
