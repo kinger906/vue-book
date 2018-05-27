@@ -1,7 +1,7 @@
 <template>
     <div>
       <MHeader>列表页</MHeader>
-      <div class="content">
+      <div class="content" @scroll="scroll" ref="scroll">
         <Loading v-if="loading"></Loading>
         <ul v-else>
           <router-link v-for="book in books" tag="li" :to="{ name:'detail',params:{ bid: book.bookId}}">
@@ -13,6 +13,7 @@
             </div>
           </router-link>
         </ul>
+        <div v-show="showMore" class="showMore" @click="more">加载更多</div>
       </div>
     </div>
 </template>
@@ -20,12 +21,14 @@
 <script>
   import MHeader from '@/base/MHeader';
   import Loading from '@/base/Loading';
-  import { getBooks,removeBook } from '@/api/index';
+  import { getPageBook,removeBook } from '@/api/index';
 export default {
   data(){
     return {
       books:[],
-      loading: true
+      loading: true,
+      offset: 0,
+      showMore: true
     }
   },
   components:{
@@ -37,13 +40,28 @@ export default {
   },
   methods:{
     async getBook(){
-      let { data: bookList } = await getBooks();
-      this.books = bookList;
+      let { data: bookObj } = await getPageBook(this.offset);
+      let { books: bookList,showMore } = bookObj;
+      this.books = this.books.concat(bookList);
+      this.showMore = showMore;
+      this.offset = this.books.length;
       this.loading = false;
     },
     async remove(id){
       await removeBook(id);
       this.books = this.books.filter(book=>book.bookId!=id);
+    },
+    more(){   //加载更多
+      this.getBook();
+    },
+    scroll(){ //滚动加载
+      clearTimeout(this.timer);
+      this.timer = setTimeout(()=>{ //this.timer挂载到当前实例，成为全局变量
+        let { clientHeight,scrollTop,scrollHeight } = this.$refs.scroll;
+        if((scrollTop+clientHeight+20)>scrollHeight){
+          this.getBook();
+        }
+      },13)
     }
   }
 }
@@ -73,5 +91,14 @@ export default {
         }
       }
     }
+  }
+  .showMore {
+    width: 100%;
+    height: 20px;
+    background: #0f0;
+    color: #fff;
+    line-height: 20px;
+    text-align: center;
+    cursor: pointer;
   }
 </style>

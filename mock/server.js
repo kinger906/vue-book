@@ -3,6 +3,7 @@ let fs = require('fs');
 let url = require('url');
 let sliders = require('./sliders');
 let path = require('path');
+let pageSize = 5;   //每页显示5条
 
 //读取图书
 function read(cb){
@@ -39,6 +40,19 @@ http.createServer((req,res)=>{
       setTimeout(() => {
         res.end(JSON.stringify(hot));
       }, 500);
+    })
+    return;
+  }
+  if(pathname === '/page'){ //分页显示
+    let offset = parseInt(query.offset) || 0;
+    read((books)=>{
+      let pageBooks = books.reverse().slice(offset,offset+pageSize);
+      let showMore = true;
+      if((offset+pageSize)>=books.length){
+        showMore = false;
+      }
+      res.setHeader("Content-Type","application/json;charset=utf8");
+      res.end(JSON.stringify({showMore,books: pageBooks}));
     })
     return;
   }

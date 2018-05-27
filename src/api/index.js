@@ -33,3 +33,8 @@ export let addBook = (data) =>{
 export let getAll = ()=>{
   return axios.all([getSliders(),getHotBooks()]);
 }
+
+//分页显示列表数据
+export let getPageBook = (offset)=>{
+  return axios.get(`/page?offset=${offset}`);
+}
