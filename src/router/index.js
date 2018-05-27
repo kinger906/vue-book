@@ -12,7 +12,10 @@ export default new Router({
   routes: [
     {
       path: '/home',
-      component: Home
+      component: Home,
+      meta: {   //路由元信息，方便显示不同，会成为$route的一个属性
+        keepAlive: true
+      }
     },
     {
       path: '/list',

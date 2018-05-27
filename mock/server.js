@@ -4,7 +4,7 @@ let url = require('url');
 let sliders = require('./sliders');
 let path = require('path');
 
-
+//读取图书
 function read(cb){
   fs.readFile(path.resolve('./mock/book.json'),'utf8',function(err,data){
     if(err || data.length == 0){
@@ -15,9 +15,11 @@ function read(cb){
     }
   })
 }
+//图书写入
 function write(data,cb){
   fs.writeFile(path.resolve('./mock/book.json'),JSON.stringify(data),cb);
 }
+//创建服务
 http.createServer((req,res)=>{
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type,Content-Length, Authorization, Accept,X-Requested-With");
