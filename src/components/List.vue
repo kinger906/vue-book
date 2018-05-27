@@ -94,10 +94,10 @@ export default {
       clearTimeout(this.timer);
       this.timer = setTimeout(()=>{ //this.timer挂载到当前实例，成为全局变量
         let { clientHeight,scrollTop,scrollHeight } = this.$refs.scroll;
-        if((scrollTop+clientHeight+20)>scrollHeight){
+        if((scrollTop+clientHeight+20)>scrollHeight && this.showMore){
           this.getBook();
         }
-      },13)
+      },60)
     }
   }
 }
